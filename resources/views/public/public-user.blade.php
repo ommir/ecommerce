@@ -13,11 +13,13 @@
                     <option value="termurah">Termurah</option>
                     <option value="termahal">Termahal</option>
                     <option value="terbaru">Terbaru</option>
+                    <option value="dilihat">Dilihat Paling Banyak</option>
                 </select>
             </div>
         </div>
     </div>
-    <div class="product-list">
+
+    <div id="product-list">
         @foreach($products as $idx => $p)
         @if ($idx == 0 || $idx % 4 == 0 )
         <div class="row mt-5">
@@ -27,7 +29,7 @@
                     <?php
                     $product = App\Models\Product::find($p->id);
                     ?>
-                    <img src="{{ asset('/images/'.$product->images()->get()[0]->image_src) }}" class="img img-thumbnail" width="600" alt="">
+                    <img src="{{ asset('/images/'. $product->images()->get()[0]->image_src) }}" class="img img-thumbnail" alt="">
                     <div class="card-body">
                         <h5 class="card-title">
                             <a href="{{ route('products.show', ['id' => $p->id]) }}">
@@ -49,15 +51,16 @@
         @endforeach
     </div>
 </div>
+<?php
+$product = App\Models\Product::paginate(1);
+?>
+<div id="pagination">
+    {{ $product->links() }}
+</div>
+</div>
 @endsection
 @section('extra-js')
 <script type="text/javascript">
-    $(document).ready(function() {
-        $('#order_field').change(function() {
-            window.location.href = '/?order_by=' + $(this).val();
-        });
-    });
-
     $(document).ready(function() {
         $('#order_field').change(function() {
             $.ajax({
@@ -73,25 +76,25 @@
                         if (idx == 0 || idx % 4 == 0) {
                             products += '<div class= "row mt-4">';
                         }
-
                         products += '<div class="col">' +
                             '<div class="card">' +
-                            '<img src="{{ asset("/images/".$product->images()->get()[0]->image_src) }}' + products.image_src +
+                            '<img src="/images' + product.image_src + '" class="img img-thumbnail" width="1200" heigth="600">' +
                             '<div class="card-body">' +
                             '<h5 class="card-title">' +
-                            '<a href="/products/' + product.id + '">' +
+                            '<a href="/product/detail/' + product.id + '">' +
                             product.name +
-                            '</a>'
-                        '</h5>'
-                        '<p class="card-text">' +
-                        product.price +
+                            '</a>' +
+                            '</h5>' +
+                            '<p class="card-text">' +
+                            product.price +
                             '</p>' +
-                            '<a href="/carts/add/' + product.id + '" class=btn btn-primary">Beli</a>' +
+                            '<a href="/carts/add/' + product.id + '" class= "btn btn-primary">Buy</a>' +
+                            '<a href="/product/detail/' + product.id + '" class= "btn btn-warning">Detail</a>' +
                             '</div>' +
                             '</div>' +
-                            '</div>'
+                            '</div>';
                         if (idx > 0 && idx % 4 == 3) {
-                            products += '</div>'
+                            products += '</div>';
                         }
                     });
                     // update element
@@ -99,7 +102,7 @@
                 },
                 error: function(data) {
                     alert('Unable to handle request');
-                },
+                }
             });
         });
     });

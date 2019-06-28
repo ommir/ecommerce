@@ -32,7 +32,7 @@ Route::get('product/detail/{product}', 'PublicController@show')->name('products.
 
 Route::get('/', 'PublicController@indexUtama')->name('home');
 
-Route::get('product/images', 'PublicController@images')->name('products.image');
+Route::get('product/images/{imageName}', 'PublicController@image')->name('products.image');
 
 Route::get('/carts', 'CartController@index')->name('carts.index');
 Route::get('/carts/add/{id}', 'CartController@add')->name('carts.add');

@@ -15,9 +15,14 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::where('user_id', '=', Auth::user()->id)->get();
+        // $products = Product::all()->where('user_id', '=', Auth::user()->id);
+        $productInstance = new Product();
+        $products = $productInstance->orderProducts($request->get('order_by'))->all();
+        if ($request->ajax()) {
+            return response()->json($products, 200);
+        }
         return view('admin.products.index', compact('products'));
     }
 

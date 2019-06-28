@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 
 
@@ -23,25 +23,27 @@ class Product extends Model
 
     public function orderProducts($order_by)
     {
-        $query = 'SELECT * FROM products ORDER BY created_at DESC';
+        $query = DB::table('products');
 
         if ($order_by == 'best_seller') {
-
-            $query = "SELECT p.*, oi.quantity FROM products AS p 
-            LEFT JOIN (
-                SELECT product_id, SUM(quantity) as quantity from order_items
-                GROUP BY product_id
-            ) AS oi ON oi.product_id = p.id
-            ORDER BY oi.quantity DESC;";
+            $query->leftJoin('order_items', 'order_items.product_id', '=', 'products.id')
+                ->select(DB::raw('sum(order_items.quantity) as quantity, products.*'))
+                ->groupBy('products.id', 'products.user_id', 'products.name', 'products.description', 'products.price', 'products.view_count', 'products.image_url', 'products.video_url', 'products.created_at', 'products.updated_at')
+                ->orderBy('quantity', 'desc');
         } else if ($order_by == 'terbaik') {
-            $query = "SELECT * FROM products ORDER BY created_at DESC";
-        } else if ($order_by == 'termurah') {
-            $query = "SELECT * FROM products ORDER BY price ASC";
-        } else if ($order_by == 'termahal') {
-            $query = "SELECT * FROM products ORDER BY price DESC";
+            $query->leftJoin('product_reviews', 'product_reviews.product_id', '=', 'products.id')
+                ->select(DB::raw('avg(product_reviews.rating) as rating, products.*'))
+                ->groupBy('products.id', 'products.user_id', 'products.name', 'products.description', 'products.price', 'products.view_count' ,'products.image_url', 'products.video_url', 'products.created_at', 'products.updated_at')
+                ->orderBy('rating', 'desc');
         } else if ($order_by == 'terbaru') {
-            $query = "SELECT * FROM products ORDER BY created_at DESC";
+            $query->orderBy('created_at', 'desc');
+        } else if ($order_by == 'termurah') {
+            $query->orderBy('price', 'asc');
+        } else if ($order_by == 'termahal') {
+            $query->orderBy('price', 'desc');
+        }else if ($order_by == 'dilihat') {
+            $query->orderBy('view_count', 'desc');
         }
-        return DB::select($query);
+        return $query->paginate(1);
     }
 }

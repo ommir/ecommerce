@@ -4,16 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Image;
 use App\Models\ProductReview;
 use Illuminate\Foundation\Auth\User;
 use DB;
 use Auth;
+use PharIo\Manifest\Type;
 
 class PublicController extends Controller
 {
 
     public function __construct()
     { }
+
+    
 
     /**
      * Display a listing of the resource.
@@ -31,7 +35,7 @@ class PublicController extends Controller
         // $product = Product::all();
         // return view('public.public-user', compact('product'));
         $productInstance = new Product();
-        $products = $productInstance->orderProducts($request->get('order_by'));
+        $products = $productInstance->orderProducts($request->get('order_by'))->all();
         if ($request->ajax()) {
             return response()->json($products, 200);
         }
@@ -64,7 +68,8 @@ class PublicController extends Controller
         }
         $productReview->save();
 
-        return redirect('/')->with('success', 'Product allready saved');
+        return view('public.detail')->with('success', 'Product allready saved');
+        
     }
 
     /**
@@ -79,6 +84,7 @@ class PublicController extends Controller
         // $users = Auth::user()->id;
         // $article = Article::with('user.comments')->find($id);
         $rating = $products->reviews()->avg('rating');
+        $views = $products->increment('view_count');
         $product_reviews = new ProductReview();
         $users = DB::table('product_reviews')
             ->join('users', 'product_reviews.user_id', '=', 'users.id')
@@ -87,6 +93,13 @@ class PublicController extends Controller
             ->where('product_reviews.product_id', '=', $id)
             ->get();
         return view('public.detail', compact('products', 'rating', 'users', 'rating_user'));
+        
+    }
+
+    public function image($imageName)
+    {
+        $filePath = public_path() . '/images' . $imageName;
+        return Image::make($filePath)->response;
     }
 
     /**

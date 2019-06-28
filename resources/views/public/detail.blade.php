@@ -19,6 +19,7 @@
             </div>
         </div>
         @endif
+
         <div class="col-md-7">
             <h3>
                 {{ $products['name'] }}
@@ -38,6 +39,9 @@
                     @endfor
                     <br>
                     Rating Product : {{ floatval($rating) }}
+            </h5>
+            <h5>
+                <i class="text-warning fa fa-eye"></i>{{$products['view_count']}}
             </h5>
             <div class="mt-4">
                 <a href="{{ route('carts.add', $products->id) }}" class="btn btn-primary">Buy</a>
@@ -61,7 +65,7 @@
                     </div>
                     <div class="tab-pane fade" id="nav-review" role="tabpanel" aria-labelledby="nav-review-tab">
                         @if(Auth::check())
-                        <form action="{{ route('posts.review') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('posts.review') }}" id="formsubmit" method="POST" enctype="multipart/form-data">
                             {{ csrf_field() }}
                             <input type="text" name="product_id" value="{{ $products['id'] }}" hidden>
                             <div class="form-group">
@@ -80,7 +84,7 @@
                                 <input class="form-control" type="text" name="rating" placeholder="Rating 1-5" id="nama">
                             </div>
 
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary" id="btn-submit">Submit</button>
                         </form>
                         @else
                         <div class="d-block p-2 bg-primary text-white">

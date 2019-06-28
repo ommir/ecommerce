@@ -62,8 +62,20 @@
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{{ route('admin.products.index') }}">Show Product</a>
+                        <a class="collapse-item" href="{{ route('admin.products.index') }}">Index Product</a>
                         <a class="collapse-item" href="{{ route('admin.products.create') }}">Create Product</a>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePagesOrder" aria-expanded="true" aria-controls="collapsePages">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Order</span>
+                </a>
+                <div id="collapsePagesOrder" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="{{ route('admin.orders.index') }}">Index Order</a>
+                        <a class="collapse-item" href="{{ route('admin.orders.create') }}">Create Order</a>
                     </div>
                 </div>
             </li>
@@ -178,11 +190,12 @@
                 <div class="container">
                     @yield('login')
                 </div>
-                <div class="row">
+                <div class="row" id="test">
                     @yield('content')
                 </div>
                 <!-- Bootstrap core JavaScript-->
-                <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+                @yield('extra-js')
                 <script src="{{ asset ('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
                 <!-- Core plugin JavaScript-->
